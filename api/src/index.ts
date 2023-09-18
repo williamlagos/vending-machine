@@ -1,0 +1,19 @@
+import type { Express, Request, Response } from 'express'
+
+import express from 'express'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const app: Express = express()
+const port = process.env.PORT
+
+app.get('/', (req: Request, res: Response) => {
+  res.send({ health: 'OK' })
+})
+
+app.listen(port, () => {
+  console.log(`[server]: Server is running at http://localhost:${port}`)
+})
+
+export default app
