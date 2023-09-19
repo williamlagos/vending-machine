@@ -27,3 +27,13 @@ export const elevateSellerRole = async (req: Request, res: Response, next: NextF
     res.status(403).json({ msg: 'You need to be a seller to operate this endpoint' })
   }
 }
+
+export const elevateBuyerRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const tokenProfile = await extractTokenProfile(req.headers.authorization ?? '')
+  if (tokenProfile.role === Role.BUYER) {
+    req.user = tokenProfile
+    next()
+  } else {
+    res.status(403).json({ msg: 'You need to be a buyer to operate this endpoint' })
+  }
+}

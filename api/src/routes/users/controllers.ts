@@ -77,3 +77,35 @@ export const removeUser = async (req: Request, res: Response): Promise<void> => 
     res.status(400).json({ msg: error.message })
   }
 }
+
+export const depositCoins = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await prisma.user.update({
+      where: {
+        id: req.params.userId
+      },
+      data: {
+        deposit: req.body.deposit
+      }
+    })
+    res.status(200)
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message })
+  }
+}
+
+export const resetCoins = async (req: Request, res: Response): Promise<void> => {
+  try {
+    await prisma.user.update({
+      where: {
+        id: req.params.userId
+      },
+      data: {
+        deposit: 0
+      }
+    })
+    res.status(200)
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message })
+  }
+}
