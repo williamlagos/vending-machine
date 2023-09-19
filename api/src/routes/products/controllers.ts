@@ -5,7 +5,6 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
-  console.log(req.user)
   try {
     const products = await prisma.product.findMany()
     res.status(200).json(products)
@@ -81,5 +80,40 @@ export const removeProduct = async (req: Request, res: Response): Promise<void> 
     res.status(200)
   } catch (error: any) {
     res.status(400).json({ msg: error.message })
+  }
+}
+
+export const buyProducts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const productId = req.params.productId
+    const requestedAmount = req.body.amount
+
+    const product = await prisma.product.findUniqueOrThrow({
+      where: {
+        id: productId
+      }
+    })
+
+    if (requestedAmount <= product.amountAvailable) {
+      await prisma.product.update({
+        where: {
+          id: productId
+        },
+        data: {
+          amountAvailable: product.amountAvailable - requestedAmount
+        }
+      })
+
+      // TODO: implement coins logic
+      res.status(200).json({
+        spent: requestedAmount * product.cost,
+        products: requestedAmount,
+        change: []
+      })
+    } else {
+      res.status(500).json({ msg: 'Insufficient stock to fulfill order' })
+    }
+  } catch (error: any) {
+    res.status(500).json({ msg: error.message })
   }
 }
