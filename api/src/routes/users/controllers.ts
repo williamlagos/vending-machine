@@ -13,14 +13,19 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-export const getUsersById = async (req: Request, res: Response): Promise<void> => {
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await prisma.user.findUniqueOrThrow({
+    const user = await prisma.user.findUniqueOrThrow({
       where: {
         id: req.params.userId
       }
     })
-    res.status(200).json(users)
+    const coins = await prisma.coins.findUniqueOrThrow({
+      where: {
+        buyerId: user.id
+      }
+    })
+    res.status(200).json({ user, coins })
   } catch (error: any) {
     res.status(500).json({ msg: error.message })
   }
@@ -32,10 +37,14 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   try {
     const user = await prisma.user.create({
       data: {
-        deposit: 0,
         username,
         password,
         role
+      }
+    })
+    await prisma.coins.create({
+      data: {
+        buyerId: user.id
       }
     })
     res.status(201).json(user)
@@ -80,13 +89,11 @@ export const removeUser = async (req: Request, res: Response): Promise<void> => 
 
 export const depositCoins = async (req: Request, res: Response): Promise<void> => {
   try {
-    await prisma.user.update({
+    await prisma.coins.update({
       where: {
         id: req.params.userId
       },
-      data: {
-        deposit: req.body.deposit
-      }
+      data: req.body
     })
     res.status(200)
   } catch (error: any) {
@@ -96,12 +103,16 @@ export const depositCoins = async (req: Request, res: Response): Promise<void> =
 
 export const resetCoins = async (req: Request, res: Response): Promise<void> => {
   try {
-    await prisma.user.update({
+    await prisma.coins.update({
       where: {
-        id: req.params.userId
+        buyerId: req.params.userId
       },
       data: {
-        deposit: 0
+        five: 0,
+        ten: 0,
+        twenty: 0,
+        fifty: 0,
+        hundred: 0
       }
     })
     res.status(200)

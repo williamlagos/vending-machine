@@ -14,18 +14,29 @@ model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   username String @unique
   password String
-  deposit Int
-  role Role
   products Product[]
+  deposit Coins?
+  role Role
 }
 
 model Product {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   productName String
   amountAvailable Int
-  cost Float
+  cost Int
   sellerId String @db.ObjectId
   seller User @relation(fields: [sellerId], references: [id])
+}
+
+model Coins {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  five Int @default(0)
+  ten Int @default(0)
+  twenty Int @default(0)
+  fifty Int @default(0)
+  hundred Int @default(0)
+  buyerId String @unique @db.ObjectId
+  buyer User @relation(fields: [buyerId], references: [id])
 }
 
 enum Role {

@@ -3,6 +3,7 @@ import type { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 
 import type { TokenProfile } from '../../types'
+import { calculateDeposit } from '../../utils'
 
 const prisma = new PrismaClient()
 
@@ -89,6 +90,8 @@ export const removeProduct = async (req: Request, res: Response): Promise<void> 
 }
 
 export const buyProducts = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.user as TokenProfile
+
   try {
     const productId = req.params.productId
     const requestedAmount = req.body.amount
@@ -100,21 +103,35 @@ export const buyProducts = async (req: Request, res: Response): Promise<void> =>
     })
 
     if (requestedAmount <= product.amountAvailable) {
-      await prisma.product.update({
+      const coins = await prisma.coins.findUniqueOrThrow({
         where: {
-          id: productId
-        },
-        data: {
-          amountAvailable: product.amountAvailable - requestedAmount
+          buyerId: id
         }
       })
 
-      // TODO: implement coins logic
-      res.status(200).json({
-        spent: requestedAmount * product.cost,
-        products: requestedAmount,
-        change: []
-      })
+      const totalCost = requestedAmount * product.cost
+      const availableDeposit = calculateDeposit(coins)
+
+      if (availableDeposit >= totalCost) {
+        await prisma.product.update({
+          where: {
+            id: productId
+          },
+          data: {
+            amountAvailable: product.amountAvailable - requestedAmount
+          }
+        })
+
+        // TODO: Solve logic for coins exchange
+
+        res.status(200).json({
+          spent: totalCost,
+          products: requestedAmount,
+          change: []
+        })
+      } else {
+        res.status(500).json({ msg: 'Insufficient funds to fulfill order' })
+      }
     } else {
       res.status(500).json({ msg: 'Insufficient stock to fulfill order' })
     }
