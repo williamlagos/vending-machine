@@ -2,6 +2,8 @@ import type { Request, Response } from 'express'
 
 import { PrismaClient } from '@prisma/client'
 
+import type { TokenProfile } from '../../types'
+
 const prisma = new PrismaClient()
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
@@ -14,10 +16,13 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
 }
 
 export const getProductById = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.user as TokenProfile
+
   try {
     const product = await prisma.product.findUniqueOrThrow({
       where: {
-        id: req.params.productId
+        id: req.params.productId,
+        sellerId: id
       }
     })
     res.status(200).json(product)
@@ -28,17 +33,12 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
 
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
   const { productName, amountAvailable, cost } = req.body
+  const { id } = req.user as TokenProfile
 
   try {
-    // TODO: Extract the payload correctly to assign the proper seller id
-    const seller = await prisma.user.findUniqueOrThrow({
-      where: {
-        id: req.headers.authorization
-      }
-    })
     const product = await prisma.product.create({
       data: {
-        sellerId: seller.id,
+        sellerId: id,
         amountAvailable,
         productName,
         cost
@@ -52,11 +52,13 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
   const { productName, amountAvailable, cost } = req.body
+  const { id } = req.user as TokenProfile
 
   try {
     const product = await prisma.product.update({
       where: {
-        id: req.params.productId
+        id: req.params.productId,
+        sellerId: id
       },
       data: {
         productName,
@@ -71,10 +73,13 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 }
 
 export const removeProduct = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.user as TokenProfile
+
   try {
     await prisma.product.delete({
       where: {
-        id: req.params.productId
+        id: req.params.productId,
+        sellerId: id
       }
     })
     res.status(200)

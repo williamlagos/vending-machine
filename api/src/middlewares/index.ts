@@ -3,12 +3,9 @@ import type { Request, Response, NextFunction } from 'express'
 import { PrismaClient, Role } from '@prisma/client'
 import jwt from 'jsonwebtoken'
 
-const prisma = new PrismaClient()
+import type { TokenProfile } from '../types'
 
-interface TokenProfile {
-  id: string
-  role: Role
-}
+const prisma = new PrismaClient()
 
 const extractTokenProfile = async (token: string): Promise<TokenProfile> => {
   const apiSecret = process.env.API_SECRET ?? ''
