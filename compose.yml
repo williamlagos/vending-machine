@@ -31,6 +31,7 @@ services:
   mongo:
     restart: always
     image: mongo:latest
+    command: --replSet rs0
     volumes:
       - ./data:/data/db
     networks:
