@@ -1,0 +1,42 @@
+services:
+  application:
+    build:
+      context: ./app
+    ports:
+      - 5173
+    stdin_open: true
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: always
+    networks:
+      - vending-machine-fs
+    depends_on:
+      - api
+
+  api:
+    restart: always
+    build:
+      context: ./api
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - vending-machine-db
+      - vending-machine-fs
+    expose: 
+      - 8000
+  mongo:
+    restart: always
+    image: mongo:latest
+    volumes:
+      - ./data:/data/db
+    networks:
+      - vending-machine-db
+    expose:
+      - 27017
+networks:
+  vending-machine-fs:
+  vending-machine-db:
