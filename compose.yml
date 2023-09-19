@@ -3,7 +3,7 @@ services:
     build:
       context: ./app
     ports:
-      - 5173
+      - 3000:3000
     stdin_open: true
     volumes:
       - ./app:/usr/src/app
