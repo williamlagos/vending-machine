@@ -16,6 +16,16 @@ model User {
   password String
   deposit Int
   role Role
+  products Product[]
+}
+
+model Product {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  productName String
+  amountAvailable Int
+  cost Float
+  sellerId String @db.ObjectId
+  seller User @relation(fields: [sellerId], references: [id])
 }
 
 enum Role {

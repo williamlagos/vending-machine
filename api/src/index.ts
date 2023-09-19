@@ -9,6 +9,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 
 import users from './routes/users'
+import products from './routes/products'
 
 dotenv.config()
 
@@ -32,6 +33,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/users', users)
+app.use('/products', products)
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`)
