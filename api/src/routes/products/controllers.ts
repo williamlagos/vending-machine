@@ -3,7 +3,7 @@ import type { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
 
 import type { TokenProfile } from '../../types'
-import { calculateDeposit } from '../../utils'
+import { calculateDeposit, calculatePurchase } from '../../utils'
 
 const prisma = new PrismaClient()
 
@@ -122,13 +122,16 @@ export const buyProducts = async (req: Request, res: Response): Promise<void> =>
           }
         })
 
-        // TODO: Solve logic for coins exchange
+        const { spent, change } = calculatePurchase(coins, totalCost)
 
-        res.status(200).json({
-          spent: totalCost,
-          products: requestedAmount,
-          change: []
+        await prisma.coins.update({
+          where: {
+            buyerId: id
+          },
+          data: change
         })
+
+        res.status(200).json({ spent, change, product })
       } else {
         res.status(500).json({ msg: 'Insufficient funds to fulfill order' })
       }
