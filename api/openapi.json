@@ -1,0 +1,724 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Vending Machine - OpenAPI 3.0",
+    "description": "This is a sample Vending Machine based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io).",
+    "contact": {
+      "email": "william.lagos@icloud.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Product",
+      "description": "Everything about the products"
+    },
+    {
+      "name": "Coins",
+      "description": "Operations about users wallet"
+    },
+    {
+      "name": "User",
+      "description": "Operations about users, whether be seller or buyer"
+    },
+    {
+      "name": "Miscellaneous"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Health endpoint",
+        "tags": [
+          "Miscellaneous"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Returns a string to show if the API is up and running"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Lists all the users",
+        "tags": [
+          "User"
+        ],
+        "security": {
+          "Token": []
+        },
+        "responses": {
+          "200": {
+            "description": "The list of the users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": [
+          "User"
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The details weren't presented properly"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Show specific user by id",
+        "tags": [
+          "User"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user response by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The user was not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update the user by the id",
+        "tags": [
+          "User"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The user was not found"
+          },
+          "500": {
+            "description": "Some error happened when trying to update"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove the user by id",
+        "tags": [
+          "User"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user was deleted"
+          },
+          "404": {
+            "description": "The user was not found"
+          }
+        }
+      }
+    },
+    "/users/{id}/deposit": {
+      "post": {
+        "summary": "deposit coins on the user wallet",
+        "tags": [
+          "Coins"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Coins"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "coins were deposited"
+          },
+          "500": {
+            "description": "an error happened during the coins deposit"
+          }
+        }
+      }
+    },
+    "/users/{id}/reset": {
+      "post": {
+        "summary": "reset coins on the user wallet, giving zeroes on each coin",
+        "tags": [
+          "Coins"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "coins were deposited"
+          },
+          "500": {
+            "description": "an error happened during the coins deposit"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Get the list of the products per sellerId",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "responses": {
+          "200": {
+            "description": "The list of the products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error has occurred during the fetching of the list"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new product linked to its sellerId",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A new product has been created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The details for its creation weren't presented properly"
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Show specific product by id",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The product id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product response by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The product was not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update the product by the id",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The product id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The product was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The product was not found"
+          },
+          "500": {
+            "description": "Some error happened when trying to update"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove the product by id",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The product id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product was deleted"
+          },
+          "404": {
+            "description": "The product was not found"
+          }
+        }
+      }
+    },
+    "/products/{id}/buy": {
+      "post": {
+        "summary": "buy a product with its coins based on product id and user id",
+        "tags": [
+          "Product"
+        ],
+        "security": {
+          "Token": []
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The user id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Buy"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "coins were discounted, and the product bought",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Purchase"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "an error happened during the purchase"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Token": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Buy": {
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The amount of products that will be bought"
+          }
+        },
+        "example": {
+          "amount": 5
+        }
+      },
+      "Purchase": {
+        "type": "object",
+        "required": [
+          "spent",
+          "change",
+          "product"
+        ],
+        "properties": {
+          "spent": {
+            "type": "object",
+            "description": "The amount of coins that were spent"
+          },
+          "remained": {
+            "type": "object",
+            "description": "The amount of coins that remained"
+          },
+          "product": {
+            "type": "object",
+            "description": "The product that was bought"
+          }
+        },
+        "example": {
+          "spent": {
+            "hundred": 1,
+            "fifty": 2,
+            "twenty": 3,
+            "ten": 2,
+            "five": 1
+          },
+          "change": {
+            "hundred": 3,
+            "fifty": 2,
+            "twenty": 0,
+            "ten": 0,
+            "five": 0
+          },
+          "product": {
+            "id": "s3fg_41j",
+            "productName": "Book",
+            "amountAvailable": 49,
+            "cost": 500,
+            "sellerId": "gsd1_245"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "required": [
+          "productName",
+          "amountAvailable",
+          "cost",
+          "sellerId"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The auto-generated id of the product"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Product commercial name"
+          },
+          "amountAvailable": {
+            "type": "number",
+            "description": "Number of products of this type available"
+          },
+          "cost": {
+            "type": "number",
+            "description": "Value of each product presented in a number divisible by the smallest coin"
+          },
+          "sellerId": {
+            "type": "string",
+            "description": "The seller link to its user via user id, when it has the seller role"
+          }
+        },
+        "example": {
+          "id": "s3fg_41j",
+          "productName": "Book",
+          "amountAvailable": 50,
+          "cost": 500,
+          "sellerId": "gsd1_245"
+        }
+      },
+      "Coins": {
+        "type": "object",
+        "required": [
+          "hundred",
+          "fifty",
+          "twenty",
+          "ten",
+          "five"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The auto-generated id of the coins wallet"
+          },
+          "hundred": {
+            "type": "number",
+            "description": "The quantity of 100 coins"
+          },
+          "fifty": {
+            "type": "number",
+            "description": "The quantity of 50 coins"
+          },
+          "twenty": {
+            "type": "number",
+            "description": "The quantity of 20 coins"
+          },
+          "ten": {
+            "type": "number",
+            "description": "The quantity of 10 coins"
+          },
+          "five": {
+            "type": "number",
+            "description": "The quantity of 5 coins"
+          },
+          "buyerId": {
+            "type": "string",
+            "description": "The wallet link to its user via user id, when it has the buyer role"
+          }
+        },
+        "example": {
+          "id": "ger2_345",
+          "hundred": 5,
+          "fifty": 4,
+          "twenty": 3,
+          "ten": 2,
+          "five": 1,
+          "buyerId": "d5fE_asz"
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "username",
+          "password",
+          "products",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The auto-generated id of the user"
+          },
+          "username": {
+            "type": "string",
+            "description": "The chosen username for this user"
+          },
+          "password": {
+            "type": "string",
+            "description": "The chosen password for this user"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "List of products when the user is a seller"
+          },
+          "deposit": {
+            "type": "object",
+            "description": "The deposit that the user carries"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "BUYER",
+              "SELLER"
+            ]
+          }
+        },
+        "example": {
+          "id": "d5fE_asz",
+          "username": "william",
+          "password": "password",
+          "products": [],
+          "deposit": {},
+          "role": "BUYER"
+        }
+      }
+    }
+  }
+}

@@ -27,7 +27,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
     })
     res.status(200).json({ user, coins })
   } catch (error: any) {
-    res.status(500).json({ msg: error.message })
+    res.status(404).json({ msg: error.message })
   }
 }
 
@@ -70,7 +70,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     })
     res.status(200).json(user)
   } catch (error: any) {
-    res.status(400).json({ msg: error.message })
+    res.status(500).json({ msg: error.message })
   }
 }
 
@@ -83,7 +83,7 @@ export const removeUser = async (req: Request, res: Response): Promise<void> => 
     })
     res.status(200)
   } catch (error: any) {
-    res.status(400).json({ msg: error.message })
+    res.status(404).json({ msg: error.message })
   }
 }
 
