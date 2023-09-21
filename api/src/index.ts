@@ -40,6 +40,10 @@ app.use(
   swaggerUi.setup(specs)
 )
 
+app.get(`${API_PREFIX}/openapi.json`, (req: Request, res: Response) => {
+  res.send(specs)
+})
+
 app.use(`${API_PREFIX}/users`, users)
 app.use(`${API_PREFIX}/products`, products)
 
