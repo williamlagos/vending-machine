@@ -1,7 +1,7 @@
 import { calculatePurchase } from './utils'
 
-describe('portfolio generation testing', () => {
-  test('it should receive a proper distribution', () => {
+describe('purchase calculation testing', () => {
+  test('it should receive a proper change', () => {
     const result = calculatePurchase({
       id: 'id',
       hundred: 5,
@@ -11,7 +11,7 @@ describe('portfolio generation testing', () => {
       five: 10,
       buyerId: 'id'
     }, 655)
-    // console.log(result)
+    console.log(result)
     expect(result.remainingCost).toBe(0)
   })
 })
