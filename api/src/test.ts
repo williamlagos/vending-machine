@@ -11,7 +11,51 @@ describe('purchase calculation testing', () => {
       five: 10,
       buyerId: 'id'
     }, 655)
-    console.log(result)
     expect(result.remainingCost).toBe(0)
+  })
+})
+
+describe('purchase calculation testing', () => {
+  test('it should receive a proper change', () => {
+    const result = calculatePurchase({
+      id: 'id',
+      hundred: 5,
+      fifty: 3,
+      twenty: 2,
+      ten: 5,
+      five: 10,
+      buyerId: 'id'
+    }, 15)
+    expect(result.remainingCost).toBe(0)
+  })
+})
+
+describe('purchase calculation testing', () => {
+  test('it should not receive a proper change, since it is an invalid price', () => {
+    const result = calculatePurchase({
+      id: 'id',
+      hundred: 5,
+      fifty: 3,
+      twenty: 2,
+      ten: 5,
+      five: 10,
+      buyerId: 'id'
+    }, 338)
+    expect(result.remainingCost).toBe(3)
+  })
+})
+
+describe('purchase calculation testing', () => {
+  test('it should not receive a proper change, since the funds are not sufficient', () => {
+    const result = calculatePurchase({
+      id: 'id',
+      hundred: 5,
+      fifty: 3,
+      twenty: 2,
+      ten: 5,
+      five: 10,
+      buyerId: 'id'
+    }, 1005)
+    expect(result.remainingCost).toBe(215)
   })
 })

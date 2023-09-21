@@ -52,7 +52,6 @@ export const calculatePurchase = (coins: Coins, cost: number): any => {
   return {
     usedCoins,
     remainingCost,
-    remainingCoins,
-    change: coins
+    remainingCoins
   }
 }

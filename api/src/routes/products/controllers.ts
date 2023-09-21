@@ -37,6 +37,8 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
   const { id } = req.user as TokenProfile
 
   try {
+    if (cost % 5 !== 0) throw new Error('The product cost must be divisible by the smallest coin available')
+
     const product = await prisma.product.create({
       data: {
         sellerId: id,
