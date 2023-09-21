@@ -115,6 +115,10 @@ export const buyProducts = async (req: Request, res: Response): Promise<void> =>
       const availableDeposit = calculateDeposit(coins)
 
       if (availableDeposit >= totalCost) {
+        const { usedCoins, remainingCoins, remainingCost } = calculatePurchase(coins, totalCost)
+
+        if (remainingCost > 0) throw new Error('An unexpected error happened during the purchase calculation')
+
         await prisma.product.update({
           where: {
             id: productId
@@ -124,16 +128,18 @@ export const buyProducts = async (req: Request, res: Response): Promise<void> =>
           }
         })
 
-        const { spent, change } = calculatePurchase(coins, totalCost)
-
         await prisma.coins.update({
           where: {
             buyerId: id
           },
-          data: change
+          data: remainingCoins
         })
 
-        res.status(200).json({ spent, change, product })
+        res.status(200).json({
+          spent: usedCoins,
+          change: remainingCoins,
+          product
+        })
       } else {
         res.status(500).json({ msg: 'Insufficient funds to fulfill order' })
       }
