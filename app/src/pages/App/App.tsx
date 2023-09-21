@@ -12,8 +12,8 @@ import {
 import { Send } from '@mui/icons-material'
 
 import './App.css'
-import { useGetProductsQuery } from './store/vendingApi'
-import { CreateProductDialog } from './components'
+import { useGetProductsQuery } from '../../store/vendingApi'
+import { CreateProductDialog } from '../../components'
 
 const App = (): React.ReactElement => {
   // const [count, setCount] = useState(0)

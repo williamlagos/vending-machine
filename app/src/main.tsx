@@ -1,23 +1,27 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ApiProvider } from '@reduxjs/toolkit/query/react'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-import App from './App.tsx'
 import './index.css'
+import { App } from './pages'
 import { vendingApi } from './store/vendingApi.ts'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 const rootElement = document.getElementById('root')
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />
+  }
+])
 
 if (rootElement !== null) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ApiProvider api={vendingApi}>
-          <App />
-        </ApiProvider>
-      </LocalizationProvider>
+      <ApiProvider api={vendingApi}>
+        <RouterProvider router={router} />
+      </ApiProvider>
     </React.StrictMode>
   )
 }
