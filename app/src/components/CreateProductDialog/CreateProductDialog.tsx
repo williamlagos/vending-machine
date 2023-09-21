@@ -53,7 +53,7 @@ const CreateProductDialog = ({
           variant="h6"
           component="h2"
         >
-          Add a new ingredient
+          Add a new product
         </Typography>
         <TextField
           id="filled-Text"
