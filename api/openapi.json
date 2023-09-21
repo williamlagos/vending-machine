@@ -38,9 +38,7 @@
     "/": {
       "get": {
         "summary": "Health endpoint",
-        "tags": [
-          "Miscellaneous"
-        ],
+        "tags": ["Miscellaneous"],
         "security": [],
         "responses": {
           "200": {
@@ -49,12 +47,39 @@
         }
       }
     },
+    "/auth": {
+      "post": {
+        "summary": "Authentication endpoint",
+        "tags": ["Miscellaneous"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Auth"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the access token in string format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "summary": "Lists all the users",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "security": [
           {
             "Token": []
@@ -78,9 +103,7 @@
       },
       "post": {
         "summary": "Create a new user",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "security": [],
         "requestBody": {
           "required": true,
@@ -112,9 +135,7 @@
     "/users/{id}": {
       "get": {
         "summary": "Show specific user by id",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "security": [
           {
             "Token": []
@@ -149,9 +170,7 @@
       },
       "put": {
         "summary": "Update the user by the id",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "security": [
           {
             "Token": []
@@ -199,9 +218,7 @@
       },
       "delete": {
         "summary": "Remove the user by id",
-        "tags": [
-          "User"
-        ],
+        "tags": ["User"],
         "security": [
           {
             "Token": []
@@ -231,9 +248,7 @@
     "/users/{id}/deposit": {
       "post": {
         "summary": "deposit coins on the user wallet",
-        "tags": [
-          "Coins"
-        ],
+        "tags": ["Coins"],
         "security": [
           {
             "Token": []
@@ -273,9 +288,7 @@
     "/users/{id}/reset": {
       "post": {
         "summary": "reset coins on the user wallet, giving zeroes on each coin",
-        "tags": [
-          "Coins"
-        ],
+        "tags": ["Coins"],
         "security": [
           {
             "Token": []
@@ -305,9 +318,7 @@
     "/products": {
       "get": {
         "summary": "Get the list of the products per sellerId",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [],
         "responses": {
           "200": {
@@ -330,9 +341,7 @@
       },
       "post": {
         "summary": "Create a new product linked to its sellerId",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [
           {
             "Token": []
@@ -368,9 +377,7 @@
     "/products/{id}": {
       "get": {
         "summary": "Show specific product by id",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [
           {
             "Token": []
@@ -405,9 +412,7 @@
       },
       "put": {
         "summary": "Update the product by the id",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [
           {
             "Token": []
@@ -455,9 +460,7 @@
       },
       "delete": {
         "summary": "Remove the product by id",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [
           {
             "Token": []
@@ -487,9 +490,7 @@
     "/products/{id}/buy": {
       "post": {
         "summary": "buy a product with its coins based on product id and user id",
-        "tags": [
-          "Product"
-        ],
+        "tags": ["Product"],
         "security": [
           {
             "Token": []
@@ -543,11 +544,40 @@
       }
     },
     "schemas": {
+      "Auth": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username"
+          },
+          "password": {
+            "type": "string",
+            "description": "The password"
+          }
+        },
+        "example": {
+          "username": "william",
+          "password": "password"
+        }
+      },
+      "Token": {
+        "type": "object",
+        "required": ["token"],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "The access token"
+          }
+        },
+        "example": {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        }
+      },
       "Buy": {
         "type": "object",
-        "required": [
-          "amount"
-        ],
+        "required": ["amount"],
         "properties": {
           "amount": {
             "type": "number",
@@ -560,11 +590,7 @@
       },
       "Purchase": {
         "type": "object",
-        "required": [
-          "spent",
-          "change",
-          "product"
-        ],
+        "required": ["spent", "change", "product"],
         "properties": {
           "spent": {
             "type": "object",
@@ -605,12 +631,7 @@
       },
       "Product": {
         "type": "object",
-        "required": [
-          "productName",
-          "amountAvailable",
-          "cost",
-          "sellerId"
-        ],
+        "required": ["productName", "amountAvailable", "cost"],
         "properties": {
           "id": {
             "type": "string",
@@ -643,13 +664,7 @@
       },
       "Coins": {
         "type": "object",
-        "required": [
-          "hundred",
-          "fifty",
-          "twenty",
-          "ten",
-          "five"
-        ],
+        "required": ["hundred", "fifty", "twenty", "ten", "five"],
         "properties": {
           "id": {
             "type": "string",
@@ -692,12 +707,7 @@
       },
       "User": {
         "type": "object",
-        "required": [
-          "username",
-          "password",
-          "products",
-          "role"
-        ],
+        "required": ["username", "password", "products", "role"],
         "properties": {
           "id": {
             "type": "string",
@@ -724,10 +734,7 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "BUYER",
-              "SELLER"
-            ]
+            "enum": ["BUYER", "SELLER"]
           }
         },
         "example": {

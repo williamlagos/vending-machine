@@ -1,6 +1,6 @@
 import type React from 'react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AppBar,
   Box,
@@ -9,24 +9,23 @@ import {
   Toolbar,
   Typography
 } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { Send } from '@mui/icons-material'
 
 import './App.css'
 import { useGetProductsQuery } from '../../store/vendingApi'
 import { CreateProductDialog } from '../../components'
+import { useAuth } from '../../app/hooks'
 
 const App = (): React.ReactElement => {
-  // const [count, setCount] = useState(0)
-
+  const { token } = useAuth()
   const { data: products } = useGetProductsQuery()
-
   const [open, setOpen] = useState(false)
-  const handleOpen = (): void => {
-    setOpen(true)
-  }
-  const handleClose = (): void => {
-    setOpen(false)
-  }
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (token === null) navigate('/entrance')
+  })
 
   return (
     <>
@@ -42,7 +41,7 @@ const App = (): React.ReactElement => {
           </Typography>
           <IconButton
             onClick={() => {
-              handleOpen()
+              setOpen(true)
             }}
             color="secondary"
             data-cy="tons-submit"
@@ -53,7 +52,9 @@ const App = (): React.ReactElement => {
       </AppBar>
       <CreateProductDialog
         open={open}
-        handleClose={handleClose}
+        handleClose={() => {
+          setOpen(false)
+        }}
       />
       <Box sx={{ m: 2 }}>
         <Grid

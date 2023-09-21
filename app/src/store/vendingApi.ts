@@ -4,6 +4,13 @@ const injectedRtkApi = api.injectEndpoints({
     get: build.query<GetApiResponse, GetApiArg>({
       query: () => ({ url: `/` })
     }),
+    postAuth: build.mutation<PostAuthApiResponse, PostAuthApiArg>({
+      query: queryArg => ({
+        url: `/auth`,
+        method: 'POST',
+        body: queryArg.auth
+      })
+    }),
     getUsers: build.query<GetUsersApiResponse, GetUsersApiArg>({
       query: () => ({ url: `/users` })
     }),
@@ -100,6 +107,11 @@ const injectedRtkApi = api.injectEndpoints({
 export { injectedRtkApi as vendingApi }
 export type GetApiResponse = unknown
 export type GetApiArg = void | never
+export type PostAuthApiResponse =
+  /** status 200 Returns the access token in string format */ Token
+export interface PostAuthApiArg {
+  auth: Auth
+}
 export type GetUsersApiResponse = /** status 200 The list of the users */ User[]
 export type GetUsersApiArg = void | never
 export type PostUsersApiResponse = /** status 200 The created user. */ User
@@ -168,6 +180,13 @@ export interface PostProductsByIdBuyApiArg {
   id: string
   buy: Buy
 }
+export interface Token {
+  token: string
+}
+export interface Auth {
+  username: string
+  password: string
+}
 export interface User {
   id?: string
   username: string
@@ -202,6 +221,7 @@ export interface Buy {
 }
 export const {
   useGetQuery,
+  usePostAuthMutation,
   useGetUsersQuery,
   usePostUsersMutation,
   useGetUsersByIdQuery,
