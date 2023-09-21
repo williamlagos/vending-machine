@@ -190,7 +190,7 @@ export interface Product {
   productName: string
   amountAvailable: number
   cost: number
-  sellerId: string
+  sellerId?: string
 }
 export interface Purchase {
   spent: object

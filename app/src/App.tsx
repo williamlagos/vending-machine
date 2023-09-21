@@ -1,36 +1,81 @@
-import React, { useState } from 'react'
+import type React from 'react'
 
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useState } from 'react'
+import {
+  AppBar,
+  Box,
+  Grid,
+  IconButton,
+  Toolbar,
+  Typography
+} from '@mui/material'
+import { Send } from '@mui/icons-material'
+
 import './App.css'
+import { useGetProductsQuery } from './store/vendingApi'
+import { CreateProductDialog } from './components'
 
-const App = (): React.ReactElement<any, any> => {
-  const [count, setCount] = useState(0)
+const App = (): React.ReactElement => {
+  // const [count, setCount] = useState(0)
+
+  const { data: products } = useGetProductsQuery()
+
+  const [open, setOpen] = useState(false)
+  const handleOpen = (): void => {
+    setOpen(true)
+  }
+  const handleClose = (): void => {
+    setOpen(false)
+  }
 
   return (
     <>
-      <div>
-        <a href='https://vitejs.dev' target='_blank' rel='noreferrer'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank' rel='noreferrer'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => {
-          setCount((count) => count + 1)
-        }}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+          >
+            Vending Machine
+          </Typography>
+          <IconButton
+            onClick={() => {
+              handleOpen()
+            }}
+            color="secondary"
+            data-cy="tons-submit"
+          >
+            <Send />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <CreateProductDialog
+        open={open}
+        handleClose={handleClose}
+      />
+      <Box sx={{ m: 2 }}>
+        <Grid
+          container
+          spacing={2}
+        >
+          {products?.map(
+            ({ productName, amountAvailable, cost }, index: number) => (
+              <Grid
+                key={index}
+                item
+                xs={12}
+                md={4}
+              >
+                <Typography>
+                  {productName} {amountAvailable} {cost}
+                </Typography>
+              </Grid>
+            )
+          )}
+        </Grid>
+      </Box>
     </>
   )
 }
