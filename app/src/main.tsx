@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ApiProvider } from '@reduxjs/toolkit/query/react'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import './index.css'
-import { App, Entrance } from './pages'
+import { App, Entrance, Registry } from './pages'
 import { vendingApi } from './store/vendingApi.ts'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './providers'
 
 const rootElement = document.getElementById('root')
@@ -18,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: '/entrance',
     element: <Entrance />
+  },
+  {
+    path: '/registry',
+    element: <Registry />
   }
 ])
 

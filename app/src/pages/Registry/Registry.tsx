@@ -1,17 +1,25 @@
-import { Typography, TextField, Button, Stack } from '@mui/material'
+import {
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup
+} from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
-import { usePostAuthMutation } from '../../store/vendingApi'
+import { usePostUsersMutation } from '../../store/vendingApi'
 import { useAuth } from '../../app/hooks'
-import { useNavigate } from 'react-router-dom'
 
-const Entrance = (): React.ReactElement => {
+const Registry = (): React.ReactElement => {
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [role, setRole] = useState<'BUYER' | 'SELLER'>('BUYER')
   const [error, setError] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  const [authenticate] = usePostAuthMutation()
+  const [createUser] = usePostUsersMutation()
   const { setToken } = useAuth()
   const navigate = useNavigate()
 
@@ -50,12 +58,24 @@ const Entrance = (): React.ReactElement => {
           setPassword(e.target.value)
         }}
       />
+      <ToggleButtonGroup
+        color="primary"
+        value={role}
+        exclusive
+        onChange={(_, value) => {
+          setRole(value)
+        }}
+        aria-label="Platform"
+      >
+        <ToggleButton value="BUYER">Buyer</ToggleButton>
+        <ToggleButton value="SELLER">Seller</ToggleButton>
+      </ToggleButtonGroup>
       <Button
         data-cy="product-submit"
         onClick={() => {
-          authenticate({ auth: { username, password } })
+          createUser({ user: { username, password, role } })
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .then(({ data }: any) => {
+            .then((data: any) => {
               if (setToken !== undefined) setToken(data.token ?? null)
               navigate('/')
             })
@@ -65,17 +85,10 @@ const Entrance = (): React.ReactElement => {
             })
         }}
       >
-        Login
-      </Button>
-      <Button
-        onClick={() => {
-          navigate('/registry')
-        }}
-      >
         Register
       </Button>
     </Stack>
   )
 }
 
-export default Entrance
+export default Registry

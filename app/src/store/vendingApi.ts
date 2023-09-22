@@ -191,7 +191,7 @@ export interface User {
   id?: string
   username: string
   password: string
-  products: object[]
+  products?: object[]
   deposit?: object
   role: 'BUYER' | 'SELLER'
 }

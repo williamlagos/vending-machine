@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import {
   AppBar,
   Box,
-  Grid,
   IconButton,
   Paper,
   SpeedDial,
@@ -19,7 +18,8 @@ import {
   Add,
   AddShoppingCart,
   AttachMoney,
-  CurrencyExchange
+  CurrencyExchange,
+  Logout
 } from '@mui/icons-material'
 
 import './App.css'
@@ -33,7 +33,7 @@ import { useAuth } from '../../app/hooks'
 import { extractPayload } from '../../app/utils'
 
 const App = (): React.ReactElement => {
-  const { token } = useAuth()
+  const { token, setToken } = useAuth()
   const { data: products } = useGetProductsQuery()
   const [resetCoins] = usePostUsersByIdResetMutation()
   const [buyProduct] = usePostProductsByIdBuyMutation()
@@ -92,6 +92,18 @@ const App = (): React.ReactElement => {
           >
             Vending Machine
           </Typography>
+          <IconButton
+            data-cy="exit"
+            sx={{ color: 'white' }}
+            onClick={() => {
+              if (setToken !== undefined) {
+                setToken(null)
+                navigate('/entrance')
+              }
+            }}
+          >
+            <Logout />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <CreateProductDialog
