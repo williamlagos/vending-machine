@@ -15,22 +15,38 @@ const extractTokenProfile = async (token: string): Promise<TokenProfile> => {
   return { id: user.id, role: user.role }
 }
 
-export const elevateSellerRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const tokenProfile = await extractTokenProfile(req.headers.authorization ?? '')
+export const elevateSellerRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const tokenProfile = await extractTokenProfile(
+    req.headers.authorization ?? ''
+  )
   if (tokenProfile.role === Role.SELLER) {
     req.user = tokenProfile
     next()
   } else {
-    res.status(403).json({ msg: 'You need to be a seller to operate this endpoint' })
+    res
+      .status(403)
+      .json({ msg: 'You need to be a seller to operate this endpoint' })
   }
 }
 
-export const elevateBuyerRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const tokenProfile = await extractTokenProfile(req.headers.authorization ?? '')
+export const elevateBuyerRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const tokenProfile = await extractTokenProfile(
+    req.headers.authorization ?? ''
+  )
   if (tokenProfile.role === Role.BUYER) {
     req.user = tokenProfile
     next()
   } else {
-    res.status(403).json({ msg: 'You need to be a buyer to operate this endpoint' })
+    res
+      .status(403)
+      .json({ msg: 'You need to be a buyer to operate this endpoint' })
   }
 }
