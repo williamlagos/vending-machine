@@ -1,5 +1,7 @@
 import type { Coins } from '@prisma/client'
 
+import { PrismaClient } from '@prisma/client'
+
 import type { CoinsContainer } from './types'
 
 export const calculateDeposit = (coins: Coins): number => {
@@ -57,3 +59,5 @@ export const calculatePurchase = (coins: Coins, cost: number): any => {
     remainingCoins
   }
 }
+
+export const prisma = new PrismaClient()

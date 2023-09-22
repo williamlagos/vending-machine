@@ -1,10 +1,8 @@
 import type { Request, Response } from 'express'
 
-import { PrismaClient } from '@prisma/client'
-
 import jwt from 'jsonwebtoken'
 
-const prisma = new PrismaClient()
+import { prisma } from '../utils'
 
 export const authenticate = async (
   req: Request,

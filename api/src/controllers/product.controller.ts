@@ -1,11 +1,7 @@
 import type { Request, Response } from 'express'
 
-import { PrismaClient } from '@prisma/client'
-
 import type { TokenProfile } from '../types'
-import { calculateDeposit, calculatePurchase } from '../utils'
-
-const prisma = new PrismaClient()
+import { calculateDeposit, calculatePurchase, prisma } from '../utils'
 
 export const getProducts = async (
   req: Request,
@@ -46,10 +42,11 @@ export const createProduct = async (
   const { id } = req.user as TokenProfile
 
   try {
-    if (cost % 5 !== 0)
+    if (cost % 5 !== 0) {
       throw new Error(
         'The product cost must be divisible by the smallest coin available'
       )
+    }
 
     const product = await prisma.product.create({
       data: {
@@ -103,7 +100,7 @@ export const removeProduct = async (
         sellerId: id
       }
     })
-    res.status(200)
+    res.sendStatus(200)
   } catch (error: any) {
     res.status(400).json({ msg: error.message })
   }
@@ -141,10 +138,11 @@ export const buyProducts = async (
           totalCost
         )
 
-        if (remainingCost > 0)
+        if (remainingCost > 0) {
           throw new Error(
             'An unexpected error happened during the purchase calculation'
           )
+        }
 
         await prisma.product.update({
           where: {

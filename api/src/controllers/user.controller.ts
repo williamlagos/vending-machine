@@ -1,8 +1,6 @@
 import type { Request, Response } from 'express'
 
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../utils'
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -13,7 +11,10 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-export const getUserById = async (req: Request, res: Response): Promise<void> => {
+export const getUserById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: {
@@ -31,7 +32,10 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
   }
 }
 
-export const createUser = async (req: Request, res: Response): Promise<void> => {
+export const createUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { username, password, role } = req.body
 
   try {
@@ -53,7 +57,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   }
 }
 
-export const updateUser = async (req: Request, res: Response): Promise<void> => {
+export const updateUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { deposit, username, password, role } = req.body
 
   try {
@@ -74,20 +81,26 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
   }
 }
 
-export const removeUser = async (req: Request, res: Response): Promise<void> => {
+export const removeUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     await prisma.user.delete({
       where: {
         id: req.params.userId
       }
     })
-    res.status(200)
+    res.sendStatus(200)
   } catch (error: any) {
     res.status(404).json({ msg: error.message })
   }
 }
 
-export const depositCoins = async (req: Request, res: Response): Promise<void> => {
+export const depositCoins = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     await prisma.coins.update({
       where: {
@@ -95,27 +108,34 @@ export const depositCoins = async (req: Request, res: Response): Promise<void> =
       },
       data: req.body
     })
-    res.status(200)
+    res.sendStatus(200)
   } catch (error: any) {
     res.status(500).json({ msg: error.message })
   }
 }
 
-export const resetCoins = async (req: Request, res: Response): Promise<void> => {
+export const resetCoins = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    await prisma.coins.update({
-      where: {
-        buyerId: req.params.userId
-      },
-      data: {
-        five: 0,
-        ten: 0,
-        twenty: 0,
-        fifty: 0,
-        hundred: 0
-      }
-    })
-    res.status(200)
+    prisma.coins
+      .update({
+        where: {
+          buyerId: req.params.userId
+        },
+        data: {
+          five: 0,
+          ten: 0,
+          twenty: 0,
+          fifty: 0,
+          hundred: 0
+        }
+      })
+      .then(() => {
+        res.sendStatus(200)
+      })
+      .catch(() => res.status(404).json({ msg: 'Not found' }))
   } catch (error: any) {
     res.status(500).json({ msg: error.message })
   }

@@ -10,6 +10,6 @@ describe('Test /deposit endpoint', () => {
     const res = await request(app)
       .post(`${API_PREFIX}/users/${userId}/reset`)
       .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-    console.log(res)
+    expect(res.status).toBe(200)
   })
 })
