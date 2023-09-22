@@ -19,14 +19,18 @@ import {
   AddShoppingCart,
   AttachMoney,
   CurrencyExchange,
+  Delete,
   Logout
 } from '@mui/icons-material'
 
 import './App.css'
 import {
+  type Coins,
+  useDeleteProductsByIdMutation,
   useGetProductsQuery,
   usePostProductsByIdBuyMutation,
-  usePostUsersByIdResetMutation
+  usePostUsersByIdResetMutation,
+  vendingApi
 } from '../../store/vendingApi'
 import { CreateProductDialog, DepositCoinsDialog } from '../../components'
 import { useAuth } from '../../app/hooks'
@@ -34,18 +38,26 @@ import { extractPayload } from '../../app/utils'
 
 const App = (): React.ReactElement => {
   const { token, setToken } = useAuth()
+
   const { data: products } = useGetProductsQuery()
   const [resetCoins] = usePostUsersByIdResetMutation()
   const [buyProduct] = usePostProductsByIdBuyMutation()
-  const [createProductOpened, setCreateProductOpened] = useState(false)
-  const [depositCoinsOpened, setDepositCoinsOpened] = useState(false)
+  const [deleteProduct] = useDeleteProductsByIdMutation()
+  const [fetchActiveUser] = vendingApi.useLazyGetUsersByIdQuery()
+
   const [activeUserId, setActiveUserId] = useState<string>('')
+  const [depositCoinsOpened, setDepositCoinsOpened] = useState(false)
+  const [createProductOpened, setCreateProductOpened] = useState(false)
+  const [activeRole, setActiveRole] = useState<'BUYER' | 'SELLER'>('BUYER')
+  const [currentDeposit, setCurrentDeposit] = useState<Coins>()
+
   const navigate = useNavigate()
 
   const actions = [
     {
       icon: <Add />,
       name: 'Create new Product',
+      role: 'SELLER',
       onClick: () => {
         setCreateProductOpened(true)
       }
@@ -53,6 +65,7 @@ const App = (): React.ReactElement => {
     {
       icon: <AttachMoney />,
       name: 'Deposit new Coins',
+      role: 'BUYER',
       onClick: () => {
         setDepositCoinsOpened(true)
       }
@@ -60,6 +73,7 @@ const App = (): React.ReactElement => {
     {
       icon: <CurrencyExchange />,
       name: 'Reset Coins',
+      role: 'BUYER',
       onClick: () => {
         resetCoins({ id: activeUserId })
           .then(() => {
@@ -77,8 +91,18 @@ const App = (): React.ReactElement => {
       navigate('/entrance')
     } else if (token !== undefined) {
       setActiveUserId(extractPayload(token).id)
+      fetchActiveUser({ id: extractPayload(token).id })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .then(({ data }: any) => {
+          console.log(data)
+          setActiveRole(data.user.role)
+          setCurrentDeposit(data.coins)
+        })
+        .catch(() => {
+          console.error('error')
+        })
     }
-  }, [token, navigate])
+  }, [token, navigate, fetchActiveUser])
 
   return (
     <>
@@ -91,6 +115,12 @@ const App = (): React.ReactElement => {
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
             Vending Machine
+          </Typography>
+          <Typography>{activeRole} &nbsp;</Typography>
+          <Typography>
+            {currentDeposit?.hundred} {currentDeposit?.fifty}{' '}
+            {currentDeposit?.twenty} {currentDeposit?.ten}{' '}
+            {currentDeposit?.five}
           </Typography>
           <IconButton
             data-cy="exit"
@@ -126,27 +156,59 @@ const App = (): React.ReactElement => {
                 key={index}
                 sx={{ padding: 1 }}
               >
-                <Typography>
-                  {productName} {amountAvailable} {cost}
-                  <IconButton
-                    onClick={() => {
-                      buyProduct({
-                        id: activeUserId,
-                        buy: { amount: 1 }
-                      })
-                        .then(() => {
-                          console.log(id)
-                        })
-                        .catch(() => {
-                          console.error('error')
-                        })
-                    }}
-                    color="secondary"
-                    data-cy="tons-submit"
-                  >
-                    <AddShoppingCart />
-                  </IconButton>
-                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <Typography>
+                    {productName} {amountAvailable} {cost}{' '}
+                  </Typography>
+                  <Typography>
+                    {activeRole === 'BUYER' ? (
+                      <IconButton
+                        onClick={() => {
+                          buyProduct({
+                            id: activeUserId,
+                            buy: { amount: 1 }
+                          })
+                            .then(() => {
+                              console.log(id)
+                            })
+                            .catch(() => {
+                              console.error('error')
+                            })
+                        }}
+                        color="secondary"
+                        data-cy="buy-product"
+                      >
+                        <AddShoppingCart />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        onClick={() => {
+                          if (id !== undefined) {
+                            deleteProduct({ id })
+                              .then(() => {
+                                console.log(id)
+                              })
+                              .catch(() => {
+                                console.error('error')
+                              })
+                          }
+                        }}
+                        sx={{ float: 'right' }}
+                        color="secondary"
+                        data-cy="delete-product"
+                      >
+                        <Delete />
+                      </IconButton>
+                    )}
+                  </Typography>
+                </Box>
               </Paper>
             )
           )}
@@ -158,14 +220,16 @@ const App = (): React.ReactElement => {
           sx={{ position: 'absolute', bottom: 16, right: 16 }}
           icon={<SpeedDialIcon />}
         >
-          {actions.map(action => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.onClick}
-            />
-          ))}
+          {actions
+            .filter(action => activeRole === action.role)
+            .map(action => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                tooltipTitle={action.name}
+                onClick={action.onClick}
+              />
+            ))}
         </SpeedDial>
       </Box>
     </>
