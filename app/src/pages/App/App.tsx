@@ -137,11 +137,13 @@ const App = (): React.ReactElement => {
             Vending Machine
           </Typography>
           <Typography>{activeRole} &nbsp;</Typography>
-          <Typography>
-            {currentDeposit?.hundred} {currentDeposit?.fifty}{' '}
-            {currentDeposit?.twenty} {currentDeposit?.ten}{' '}
-            {currentDeposit?.five}
-          </Typography>
+          {activeRole === 'BUYER' && (
+            <Typography>
+              {currentDeposit?.hundred} {currentDeposit?.fifty}{' '}
+              {currentDeposit?.twenty} {currentDeposit?.ten}{' '}
+              {currentDeposit?.five}
+            </Typography>
+          )}
           <IconButton
             data-cy="exit"
             sx={{ color: 'white' }}
