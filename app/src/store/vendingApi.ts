@@ -12,30 +12,35 @@ const injectedRtkApi = api.injectEndpoints({
       })
     }),
     getUsers: build.query<GetUsersApiResponse, GetUsersApiArg>({
-      query: () => ({ url: `/users` })
+      query: () => ({ url: `/users` }),
+      providesTags: ['User']
     }),
     postUsers: build.mutation<PostUsersApiResponse, PostUsersApiArg>({
       query: queryArg => ({
         url: `/users`,
         method: 'POST',
         body: queryArg.user
-      })
+      }),
+      invalidatesTags: ['User']
     }),
     getUsersById: build.query<GetUsersByIdApiResponse, GetUsersByIdApiArg>({
-      query: queryArg => ({ url: `/users/${queryArg.id}` })
+      query: queryArg => ({ url: `/users/${queryArg.id}` }),
+      providesTags: ['User']
     }),
     putUsersById: build.mutation<PutUsersByIdApiResponse, PutUsersByIdApiArg>({
       query: queryArg => ({
         url: `/users/${queryArg.id}`,
         method: 'PUT',
         body: queryArg.user
-      })
+      }),
+      invalidatesTags: ['User']
     }),
     deleteUsersById: build.mutation<
       DeleteUsersByIdApiResponse,
       DeleteUsersByIdApiArg
     >({
-      query: queryArg => ({ url: `/users/${queryArg.id}`, method: 'DELETE' })
+      query: queryArg => ({ url: `/users/${queryArg.id}`, method: 'DELETE' }),
+      invalidatesTags: ['User']
     }),
     postUsersByIdDeposit: build.mutation<
       PostUsersByIdDepositApiResponse,
@@ -45,7 +50,8 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/users/${queryArg.id}/deposit`,
         method: 'POST',
         body: queryArg.coins
-      })
+      }),
+      invalidatesTags: ['User', 'Coin']
     }),
     postUsersByIdReset: build.mutation<
       PostUsersByIdResetApiResponse,
@@ -54,23 +60,27 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/users/${queryArg.id}/reset`,
         method: 'POST'
-      })
+      }),
+      invalidatesTags: ['User', 'Coin']
     }),
     getProducts: build.query<GetProductsApiResponse, GetProductsApiArg>({
-      query: () => ({ url: `/products` })
+      query: () => ({ url: `/products` }),
+      providesTags: ['Product']
     }),
     postProducts: build.mutation<PostProductsApiResponse, PostProductsApiArg>({
       query: queryArg => ({
         url: `/products`,
         method: 'POST',
         body: queryArg.product
-      })
+      }),
+      invalidatesTags: ['Product']
     }),
     getProductsById: build.query<
       GetProductsByIdApiResponse,
       GetProductsByIdApiArg
     >({
-      query: queryArg => ({ url: `/products/${queryArg.id}` })
+      query: queryArg => ({ url: `/products/${queryArg.id}` }),
+      providesTags: ['Product']
     }),
     putProductsById: build.mutation<
       PutProductsByIdApiResponse,
@@ -80,7 +90,8 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/products/${queryArg.id}`,
         method: 'PUT',
         body: queryArg.product
-      })
+      }),
+      invalidatesTags: ['Product']
     }),
     deleteProductsById: build.mutation<
       DeleteProductsByIdApiResponse,
@@ -89,7 +100,8 @@ const injectedRtkApi = api.injectEndpoints({
       query: queryArg => ({
         url: `/products/${queryArg.id}`,
         method: 'DELETE'
-      })
+      }),
+      invalidatesTags: ['Product']
     }),
     postProductsByIdBuy: build.mutation<
       PostProductsByIdBuyApiResponse,
@@ -99,7 +111,8 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/products/${queryArg.id}/buy`,
         method: 'POST',
         body: queryArg.buy
-      })
+      }),
+      invalidatesTags: ['Product', 'Coin', 'User']
     })
   }),
   overrideExisting: false
