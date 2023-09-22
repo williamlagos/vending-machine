@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express'
 
 import express from 'express'
 
-import { authenticate } from './controllers'
+import { authenticate } from '../controllers/auth.controller'
 
 const router = express.Router()
 

@@ -10,9 +10,9 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 
-import auth from './routes/auth'
-import users from './routes/users'
-import products from './routes/products'
+import auth from './routes/auth.route'
+import users from './routes/user.route'
+import products from './routes/product.route'
 import specs from '../openapi.json'
 
 dotenv.config()
