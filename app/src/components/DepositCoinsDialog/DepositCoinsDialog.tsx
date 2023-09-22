@@ -10,6 +10,9 @@ import {
 } from '@mui/material'
 import type React from 'react'
 import { useState } from 'react'
+import { type SerializedError } from '@reduxjs/toolkit'
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
+
 import { usePostUsersByIdDepositMutation } from '../../store/vendingApi'
 import { useAuth } from '../../app/hooks'
 import { extractPayload } from '../../app/utils'
@@ -17,6 +20,10 @@ import { extractPayload } from '../../app/utils'
 interface DepositCoinsDialogProps {
   open: boolean
   handleClose: () => void
+  handleSuccessMessage: (
+    data: { data: unknown } | { error: FetchBaseQueryError | SerializedError }
+  ) => void
+  handleErrorMessage: (error: unknown) => void
 }
 
 const StyledBox = styled(Box)`
@@ -35,7 +42,9 @@ const StyledBox = styled(Box)`
 
 const DepositCoinsDialog = ({
   open,
-  handleClose
+  handleClose,
+  handleSuccessMessage,
+  handleErrorMessage
 }: DepositCoinsDialogProps): React.ReactElement => {
   const [hundred, setHundred] = useState<number>(0)
   const [fifty, setFifty] = useState<number>(0)
@@ -116,11 +125,11 @@ const DepositCoinsDialog = ({
                 id: payload.id,
                 coins: { hundred, fifty, twenty, ten, five }
               })
-                .then(() => {
-                  console.log('success')
+                .then(data => {
+                  handleSuccessMessage(data)
                 })
-                .catch(() => {
-                  console.error('error')
+                .catch(error => {
+                  handleErrorMessage(error)
                 })
             }
           }}

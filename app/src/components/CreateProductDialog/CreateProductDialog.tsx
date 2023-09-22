@@ -10,11 +10,18 @@ import {
 } from '@mui/material'
 import type React from 'react'
 import { useState } from 'react'
+import { type SerializedError } from '@reduxjs/toolkit'
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
+
 import { usePostProductsMutation } from '../../store/vendingApi'
 
 interface CreateDialogProps {
   open: boolean
   handleClose: () => void
+  handleSuccessMessage: (
+    data: { data: unknown } | { error: FetchBaseQueryError | SerializedError }
+  ) => void
+  handleErrorMessage: (error: unknown) => void
 }
 
 const StyledBox = styled(Box)`
@@ -33,7 +40,9 @@ const StyledBox = styled(Box)`
 
 const CreateProductDialog = ({
   open,
-  handleClose
+  handleClose,
+  handleSuccessMessage,
+  handleErrorMessage
 }: CreateDialogProps): React.ReactElement => {
   const [productName, setProductName] = useState<string>('')
   const [amountAvailable, setAmountAvailable] = useState<number>(0)
@@ -86,11 +95,11 @@ const CreateProductDialog = ({
           data-cy="product-submit"
           onClick={() => {
             createProduct({ product: { productName, amountAvailable, cost } })
-              .then(() => {
-                console.log('success')
+              .then(data => {
+                handleSuccessMessage(data)
               })
-              .catch(() => {
-                console.error('error')
+              .catch(error => {
+                handleErrorMessage(error)
               })
           }}
         >

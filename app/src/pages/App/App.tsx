@@ -2,10 +2,12 @@ import type React from 'react'
 
 import { useEffect, useState } from 'react'
 import {
+  Alert,
   AppBar,
   Box,
   IconButton,
   Paper,
+  Snackbar,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -22,6 +24,8 @@ import {
   Delete,
   Logout
 } from '@mui/icons-material'
+import { type SerializedError } from '@reduxjs/toolkit'
+import { type FetchBaseQueryError } from '@reduxjs/toolkit/dist/query'
 
 import './App.css'
 import {
@@ -48,10 +52,27 @@ const App = (): React.ReactElement => {
   const [activeUserId, setActiveUserId] = useState<string>('')
   const [depositCoinsOpened, setDepositCoinsOpened] = useState(false)
   const [createProductOpened, setCreateProductOpened] = useState(false)
+  const [errorMessageOpened, setErrorMessageOpened] = useState(false)
+  const [successMessageOpened, setSuccessMessageOpened] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [activeRole, setActiveRole] = useState<'BUYER' | 'SELLER'>('BUYER')
   const [currentDeposit, setCurrentDeposit] = useState<Coins>()
 
   const navigate = useNavigate()
+
+  const successMessageHandler = (
+    data: { data: unknown } | { error: FetchBaseQueryError | SerializedError }
+  ): void => {
+    setSuccessMessageOpened(true)
+    setSuccessMessage(JSON.stringify(data))
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorMessageHandler = (error: any): void => {
+    setErrorMessageOpened(true)
+    setErrorMessage(JSON.stringify(error))
+  }
 
   const actions = [
     {
@@ -76,11 +97,11 @@ const App = (): React.ReactElement => {
       role: 'BUYER',
       onClick: () => {
         resetCoins({ id: activeUserId })
-          .then(() => {
-            console.log('success')
+          .then(data => {
+            successMessageHandler(data)
           })
-          .catch(() => {
-            console.error('error')
+          .catch(error => {
+            errorMessageHandler(error)
           })
       }
     }
@@ -94,12 +115,11 @@ const App = (): React.ReactElement => {
       fetchActiveUser({ id: extractPayload(token).id })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .then(({ data }: any) => {
-          console.log(data)
           setActiveRole(data.user.role)
           setCurrentDeposit(data.coins)
         })
-        .catch(() => {
-          console.error('error')
+        .catch(error => {
+          errorMessageHandler(error)
         })
     }
   }, [token, navigate, fetchActiveUser])
@@ -138,12 +158,16 @@ const App = (): React.ReactElement => {
       </AppBar>
       <CreateProductDialog
         open={createProductOpened}
+        handleSuccessMessage={successMessageHandler}
+        handleErrorMessage={errorMessageHandler}
         handleClose={() => {
           setCreateProductOpened(false)
         }}
       />
       <DepositCoinsDialog
         open={depositCoinsOpened}
+        handleSuccessMessage={successMessageHandler}
+        handleErrorMessage={errorMessageHandler}
         handleClose={() => {
           setDepositCoinsOpened(false)
         }}
@@ -175,11 +199,11 @@ const App = (): React.ReactElement => {
                             id: activeUserId,
                             buy: { amount: 1 }
                           })
-                            .then(() => {
-                              console.log(id)
+                            .then(data => {
+                              successMessageHandler(data)
                             })
-                            .catch(() => {
-                              console.error('error')
+                            .catch(error => {
+                              errorMessageHandler(error)
                             })
                         }}
                         color="secondary"
@@ -192,11 +216,11 @@ const App = (): React.ReactElement => {
                         onClick={() => {
                           if (id !== undefined) {
                             deleteProduct({ id })
-                              .then(() => {
-                                console.log(id)
+                              .then(data => {
+                                successMessageHandler(data)
                               })
-                              .catch(() => {
-                                console.error('error')
+                              .catch(error => {
+                                errorMessageHandler(error)
                               })
                           }
                         }}
@@ -214,6 +238,40 @@ const App = (): React.ReactElement => {
           )}
         </Stack>
       </Box>
+      <Snackbar
+        open={errorMessageOpened}
+        autoHideDuration={6000}
+        onClose={() => {
+          setErrorMessageOpened(false)
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setErrorMessageOpened(false)
+          }}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={successMessageOpened}
+        autoHideDuration={6000}
+        onClose={() => {
+          setSuccessMessageOpened(false)
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setSuccessMessageOpened(false)
+          }}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
       <Box sx={{ height: '92vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
         <SpeedDial
           ariaLabel="SpeedDial basic example"
