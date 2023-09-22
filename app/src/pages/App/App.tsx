@@ -6,9 +6,11 @@ import {
   Box,
   Grid,
   IconButton,
+  Paper,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
+  Stack,
   Toolbar,
   Typography
 } from '@mui/material'
@@ -28,6 +30,7 @@ import {
 } from '../../store/vendingApi'
 import { CreateProductDialog, DepositCoinsDialog } from '../../components'
 import { useAuth } from '../../app/hooks'
+import { extractPayload } from '../../app/utils'
 
 const App = (): React.ReactElement => {
   const { token } = useAuth()
@@ -36,6 +39,7 @@ const App = (): React.ReactElement => {
   const [buyProduct] = usePostProductsByIdBuyMutation()
   const [createProductOpened, setCreateProductOpened] = useState(false)
   const [depositCoinsOpened, setDepositCoinsOpened] = useState(false)
+  const [activeUserId, setActiveUserId] = useState<string>('')
   const navigate = useNavigate()
 
   const actions = [
@@ -57,8 +61,7 @@ const App = (): React.ReactElement => {
       icon: <CurrencyExchange />,
       name: 'Reset Coins',
       onClick: () => {
-        // TODO: logic for retrieving the user id easily
-        resetCoins({ id: '' })
+        resetCoins({ id: activeUserId })
           .then(() => {
             console.log('success')
           })
@@ -70,8 +73,12 @@ const App = (): React.ReactElement => {
   ]
 
   useEffect(() => {
-    if (token === null) navigate('/entrance')
-  })
+    if (token === null) {
+      navigate('/entrance')
+    } else if (token !== undefined) {
+      setActiveUserId(extractPayload(token).id)
+    }
+  }, [token, navigate])
 
   return (
     <>
@@ -100,23 +107,21 @@ const App = (): React.ReactElement => {
         }}
       />
       <Box sx={{ m: 2 }}>
-        <Grid
-          container
-          spacing={2}
-        >
+        <Stack spacing={2}>
           {products?.map(
             ({ id, productName, amountAvailable, cost }, index: number) => (
-              <Grid
+              <Paper
                 key={index}
-                item
-                xs={12}
-                md={4}
+                sx={{ padding: 1 }}
               >
                 <Typography>
                   {productName} {amountAvailable} {cost}
                   <IconButton
                     onClick={() => {
-                      buyProduct({ id, amount: 1 })
+                      buyProduct({
+                        id: activeUserId,
+                        buy: { amount: 1 }
+                      })
                         .then(() => {
                           console.log(id)
                         })
@@ -130,10 +135,10 @@ const App = (): React.ReactElement => {
                     <AddShoppingCart />
                   </IconButton>
                 </Typography>
-              </Grid>
+              </Paper>
             )
           )}
-        </Grid>
+        </Stack>
       </Box>
       <Box sx={{ height: '92vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
         <SpeedDial

@@ -11,6 +11,8 @@ import {
 import type React from 'react'
 import { useState } from 'react'
 import { usePostUsersByIdDepositMutation } from '../../store/vendingApi'
+import { useAuth } from '../../app/hooks'
+import { extractPayload } from '../../app/utils'
 
 interface DepositCoinsDialogProps {
   open: boolean
@@ -40,6 +42,8 @@ const DepositCoinsDialog = ({
   const [twenty, setTwenty] = useState<number>(0)
   const [ten, setTen] = useState<number>(0)
   const [five, setFive] = useState<number>(0)
+
+  const { token } = useAuth()
 
   const [depositCoins] = usePostUsersByIdDepositMutation()
 
@@ -106,17 +110,19 @@ const DepositCoinsDialog = ({
         <Button
           data-cy="product-submit"
           onClick={() => {
-            // TODO: fetch user id easily
-            depositCoins({
-              id: '',
-              coins: { hundred, fifty, twenty, ten, five }
-            })
-              .then(() => {
-                console.log('success')
+            if (token !== null && token !== undefined) {
+              const payload = extractPayload(token)
+              depositCoins({
+                id: payload.id,
+                coins: { hundred, fifty, twenty, ten, five }
               })
-              .catch(() => {
-                console.error('error')
-              })
+                .then(() => {
+                  console.log('success')
+                })
+                .catch(() => {
+                  console.error('error')
+                })
+            }
           }}
         >
           Submit

@@ -13,14 +13,14 @@ export const calculateDeposit = (coins: Coins): number => {
 }
 
 export const calculatePurchase = (coins: Coins, cost: number): any => {
-  // TODO: Solve logic for coins exchange
   let remainingCost = cost
   const usedCoins: CoinsContainer = {}
   const remainingCoins: CoinsContainer = {}
 
   if (coins.hundred > 0) {
     const neededCoins = Math.floor(remainingCost / 100)
-    usedCoins.hundred = neededCoins <= coins.hundred ? neededCoins : coins.hundred
+    usedCoins.hundred =
+      neededCoins <= coins.hundred ? neededCoins : coins.hundred
     remainingCoins.hundred = coins.hundred - usedCoins.hundred
     remainingCost -= usedCoins.hundred * 100
     if (remainingCost > 0 && coins.fifty > 0) {
@@ -30,7 +30,8 @@ export const calculatePurchase = (coins: Coins, cost: number): any => {
       remainingCost -= usedCoins.fifty * 50
       if (remainingCost > 0 && coins.twenty > 0) {
         const neededCoins = Math.floor(remainingCost / 20)
-        usedCoins.twenty = neededCoins <= coins.twenty ? neededCoins : coins.twenty
+        usedCoins.twenty =
+          neededCoins <= coins.twenty ? neededCoins : coins.twenty
         remainingCoins.twenty = coins.twenty - usedCoins.twenty
         remainingCost -= usedCoins.twenty * 20
         if (remainingCost > 0 && coins.ten > 0) {
@@ -40,7 +41,8 @@ export const calculatePurchase = (coins: Coins, cost: number): any => {
           remainingCost -= usedCoins.ten * 10
           if (remainingCost > 0 && coins.five > 0) {
             const neededCoins = Math.floor(remainingCost / 5)
-            usedCoins.five = neededCoins <= coins.five ? neededCoins : coins.five
+            usedCoins.five =
+              neededCoins <= coins.five ? neededCoins : coins.five
             remainingCoins.five = coins.five - usedCoins.five
             remainingCost -= usedCoins.five * 5
           }

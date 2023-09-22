@@ -54,8 +54,9 @@ const Entrance = (): React.ReactElement => {
         data-cy="product-submit"
         onClick={() => {
           authenticate({ auth: { username, password } })
-            .then(result => {
-              setToken(result.data.token ?? null)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .then((data: any) => {
+              if (setToken !== undefined) setToken(data.token ?? null)
               navigate('/')
             })
             .catch(() => {
