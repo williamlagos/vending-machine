@@ -100,7 +100,7 @@ export const removeProduct = async (
         sellerId: id
       }
     })
-    res.sendStatus(200)
+    res.status(200).json({ msg: 'Successfully removed product' })
   } catch (error: any) {
     res.status(400).json({ msg: error.message })
   }

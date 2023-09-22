@@ -196,7 +196,7 @@ const App = (): React.ReactElement => {
                       <IconButton
                         onClick={() => {
                           buyProduct({
-                            id: activeUserId,
+                            id: id ?? '',
                             buy: { amount: 1 }
                           })
                             .then(data => {
@@ -272,7 +272,7 @@ const App = (): React.ReactElement => {
           {successMessage}
         </Alert>
       </Snackbar>
-      <Box sx={{ height: '92vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
+      <Box sx={{ height: '80vh', transform: 'translateZ(0px)', flexGrow: 1 }}>
         <SpeedDial
           ariaLabel="SpeedDial basic example"
           sx={{ position: 'absolute', bottom: 16, right: 16 }}

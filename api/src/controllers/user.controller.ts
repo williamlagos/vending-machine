@@ -91,7 +91,7 @@ export const removeUser = async (
         id: req.params.userId
       }
     })
-    res.sendStatus(200)
+    res.status(200).json({ msg: 'Successfully removed user' })
   } catch (error: any) {
     res.status(404).json({ msg: error.message })
   }
@@ -108,7 +108,7 @@ export const depositCoins = async (
       },
       data: req.body
     })
-    res.sendStatus(200)
+    res.status(200).json({ msg: 'Successfully deposited coins' })
   } catch (error: any) {
     res.status(500).json({ msg: error.message })
   }
@@ -133,7 +133,7 @@ export const resetCoins = async (
         }
       })
       .then(() => {
-        res.sendStatus(200)
+        res.status(200).json({ msg: 'Succesfully resetted coins deposit' })
       })
       .catch(() => res.status(404).json({ msg: 'Not found' }))
   } catch (error: any) {
