@@ -9,7 +9,8 @@ describe('Test /buy endpoint', () => {
     const productId = '650c799e0387d6166e51b5d2'
     const res = await request(app)
       .post(`${API_PREFIX}/products/${productId}/buy`)
+      .send({ amount: 1 })
       .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-    console.log(res)
+    expect(res.status).toBe(200)
   })
 })

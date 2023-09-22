@@ -104,7 +104,7 @@ export const depositCoins = async (
   try {
     await prisma.coins.update({
       where: {
-        id: req.params.userId
+        buyerId: req.params.userId
       },
       data: req.body
     })

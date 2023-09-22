@@ -6,7 +6,7 @@ const API_PREFIX = '/api/v1'
 
 describe('Test /deposit endpoint', () => {
   test('POST /deposit route', async () => {
-    const userId = '6509a02c607855f89890d034'
+    const userId = '6509e7ecd0a36b0100b3b609'
     const res = await request(app)
       .post(`${API_PREFIX}/users/${userId}/deposit`)
       .send({
@@ -17,6 +17,6 @@ describe('Test /deposit endpoint', () => {
         five: 1
       })
       .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-    console.log(res)
+    expect(res.status).toBe(200)
   })
 })
